@@ -1,25 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
 
-function App() {
+function Dados() {
+  const [driverData, setDriverData] = useState([]);
+  const [teamData, setTeamData] = useState([]);
+
+  useEffect(() => {
+    fetch("https://alfred.to/reservas/sports-nation/v2/sports-plus", {
+  headers: {
+    Authorization: "Basic QWxmcmVkOlREODI0MThZYlBweCpuWDV4WDNrSlRrVFNeRTZndQ==",
+  },
+})
+      .then((response) => response.json())
+      .then((data) => {
+        const driverArray = data.f1SportInfo[0].f1GeneralTable.map((driver) => {
+          return {
+            driverIcon: driver.driverIcon,
+            driverName: driver.driverName,
+            driverGpPosition: driver.driverGpPosition,
+          };
+        });
+        setDriverData(driverArray);
+
+        const teamArray = data.f1SportInfo[0].f1GeneralTable.map((driver) => {
+          return {
+            teamIcon: driver.teamIcon,
+            driverLapTime: driver.driverLapTime,
+            driverPoints: driver.driverPoints,
+          };
+        });
+        setTeamData(teamArray);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div>
+        {driverData.map((driver) => (
+          <div key={driver.driverName}>
+            <img src={driver.driverIcon} alt={driver.driverName} />
+            <p>{driver.driverName}</p>
+            <p>{driver.driverGpPosition}</p>
+          </div>
+        ))}
+      </div>
+      <div>
+        {teamData.map((driver) => (
+          <div key={driver.teamIcon}>
+            <img src={driver.teamIcon} alt="team logo" />
+            <p>{driver.driverLapTime}</p>
+            <p>{driver.driverPoints}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-export default App;
+export default Dados;
