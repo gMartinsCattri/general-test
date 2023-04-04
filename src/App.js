@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import './App.css'
 
 function App() {
   const [contentList, setContentList] = useState([]);
@@ -16,7 +17,6 @@ function App() {
     if (contentList.length > 0) {
       const videoElement = videoRef.current;
       videoElement.src = contentList[0];
-      videoElement.preload = "none";
     }
   }, [contentList]);
 
@@ -47,8 +47,8 @@ function App() {
   }, [contentList]);
 
   return (
-    <div>
-      <video controls ref={videoRef}>
+    <div className="video-container">
+      <video className="video" autoPlay muted ref={videoRef}>
         
       </video>
     </div>

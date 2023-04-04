@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.video{
+  height: 1920px;
+  width: 1080px;
+}
+
+.video-container{
+  display: flex;
+  justify-self: center;
+  height: 100vh;
+}
