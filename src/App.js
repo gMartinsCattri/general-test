@@ -1,59 +1,53 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
-function Dados() {
-  const [driverData, setDriverData] = useState([]);
-  const [teamData, setTeamData] = useState([]);
-
+function App() {
+  const [contentList, setContentList] = useState([]);
+  const [playlist, setPlaylist] = useState([]);
   useEffect(() => {
-    fetch("https://alfred.to/reservas/sports-nation/v2/sports-plus", {
-  headers: {
-    Authorization: "Basic QWxmcmVkOlREODI0MThZYlBweCpuWDV4WDNrSlRrVFNeRTZndQ==",
-  },
-})
-      .then((response) => response.json())
-      .then((data) => {
-        const driverArray = data.f1SportInfo[0].f1GeneralTable.map((driver) => {
-          return {
-            driverIcon: driver.driverIcon,
-            driverName: driver.driverName,
-            driverGpPosition: driver.driverGpPosition,
-          };
-        });
-        setDriverData(driverArray);
-
-        const teamArray = data.f1SportInfo[0].f1GeneralTable.map((driver) => {
-          return {
-            teamIcon: driver.teamIcon,
-            driverLapTime: driver.driverLapTime,
-            driverPoints: driver.driverPoints,
-          };
-        });
-        setTeamData(teamArray);
+    fetch('https://alfred.to/minideneva/mall/dev/channel/ads')
+      .then(response => response.json())
+      .then(data => {
+        setPlaylist(data.playlist);
+        setContentList(data.playlist.map(video => video.content));
       });
   }, []);
 
+  console.log(contentList)
+  console.log(playlist)
+
+  useEffect(() => {
+    const videoElement = document.querySelector("#video-player");
+
+    if (contentList.length > 0) {
+      videoElement.src = contentList[0];
+      videoElement.addEventListener("ended", handleVideoEnded);
+    }
+    return () => {
+      videoElement.removeEventListener("ended", handleVideoEnded);
+    };
+  }, [contentList]);
+
+  const handleVideoEnded = () => {
+    const videoElement = document.querySelector("#video-player");
+
+    const currentIndex = contentList.indexOf(videoElement.src);
+
+    if (currentIndex < contentList.length - 1) {
+      videoElement.src = contentList[currentIndex + 1];
+      videoElement.play();
+    } else {
+      videoElement.src = contentList[0];
+      videoElement.play();
+    }
+  };
+
   return (
     <div>
-      <div>
-        {driverData.map((driver) => (
-          <div key={driver.driverName}>
-            <img src={driver.driverIcon} alt={driver.driverName} />
-            <p>{driver.driverName}</p>
-            <p>{driver.driverGpPosition}</p>
-          </div>
-        ))}
-      </div>
-      <div>
-        {teamData.map((driver) => (
-          <div key={driver.teamIcon}>
-            <img src={driver.teamIcon} alt="team logo" />
-            <p>{driver.driverLapTime}</p>
-            <p>{driver.driverPoints}</p>
-          </div>
-        ))}
-      </div>
+      <video autoPlay id="video-player">
+        
+      </video>
     </div>
   );
 }
 
-export default Dados;
+export default App;
