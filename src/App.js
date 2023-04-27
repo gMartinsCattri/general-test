@@ -6,11 +6,11 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:3000/GetNextCampaign")
+      .get("http://local.alfred.com/deneva-service/GetNextCampaign")
       .then((response) => {
         const srcParts = response.data.src.split("//");
         const srcValue = srcParts[srcParts.length - 1];
-        const url = `http://local.alfred.com/deneva/${srcValue}`;
+        const url = `http://local.alfred.com/deneva-service/${srcValue}`;
         setData(url);
         console.log(data)
       })
