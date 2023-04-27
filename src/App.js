@@ -1,58 +1,30 @@
-import { useState, useEffect, useRef } from "react";
-import './App.css'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
-  const [contentList, setContentList] = useState([]);
-  const videoRef = useRef(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch('https://alfred.to/minideneva/mall/dev/channel/ads')
-      .then(response => response.json())
-      .then(data => {
-        setContentList(data.playlist.map(video => video.content));
+    axios
+      .get("http://127.0.0.1:3000/GetNextCampaign")
+      .then((response) => {
+        const srcParts = response.data.src.split("//");
+        const srcValue = srcParts[srcParts.length - 1];
+        const url = `http://local.alfred.com/deneva/${srcValue}`;
+        setData(url);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }, []);
-
-  useEffect(() => {
-    if (contentList.length > 0) {
-      const videoElement = videoRef.current;
-      videoElement.src = contentList[0];
-    }
-  }, [contentList]);
-
-  useEffect(() => {
-    const videoElement = videoRef.current;
-
-    const handleVideoEnded = () => {
-      const currentIndex = contentList.indexOf(videoElement.src);
-
-      if (currentIndex < contentList.length - 1) {
-        videoElement.src = contentList[currentIndex + 1];
-        videoElement.play();
-      } else {
-        videoElement.src = contentList[0];
-        videoElement.play();
-      }
-    };
-
-    if (videoElement && contentList.length > 0) {
-      videoElement.addEventListener("ended", handleVideoEnded);
-    }
-
-    return () => {
-      if (videoElement) {
-        videoElement.removeEventListener("ended", handleVideoEnded);
-      }
-    };
-  }, [contentList]);
-
   return (
-    <div className="video-container">
-      <video className="video" autoPlay muted ref={videoRef}>
-        
-      </video>
+    <div>
+    <div>
+      <video src={data}></video>
+    </div>
     </div>
   );
 }
 
 export default App;
+
