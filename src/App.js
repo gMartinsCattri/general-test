@@ -25,7 +25,7 @@ function VideoPlayer() {
     const startTime = videoRef.current.currentTime;
     const endTime = new Date().getTime() / 1000;
     const data = { id_campaing, id_resource, startTime, endTime };
-    axios.post('http://127.0.0.1:3000/AuditCampaign', data);
+    axios.post('http://local.alfred.com/deneva-service/AuditCampaign ', data);
   };
 
   return (
