@@ -1,42 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-function VideoPlayer() {
-  const [videoUrl, setVideoUrl] = useState('');
-  const [videoData, setVideoData] = useState({});
-  const videoRef = useRef(null);
+function App() {
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    axios.get('http://local.alfred.com/deneva-service/GetNextCampaign')
-      .then(response => {
-        const { src } = response.data;
-        const srcValue = src.split('//')[1];
+    axios
+      .get("http://127.0.0.1:3000/GetNextCampaign")
+      .then((response) => {
+        const srcParts = response.data.src.split("//");
+        const srcValue = srcParts[srcParts.length - 1];
         const url = `http://local.alfred.com/deneva/${srcValue}`;
-        setVideoUrl(url);
-        setVideoData(response.data);
+        setData(url);
+        console.log(data)
       })
-      .catch(error => {
-        console.error(error);
+      .catch((error) => {
+        console.log(error);
       });
   }, []);
-
-  const handleVideoEnd = () => {
-    const { id_campaing, id_resource } = videoData;
-    const startTime = videoRef.current.currentTime;
-    const endTime = new Date().getTime() / 1000;
-    const data = { id_campaing, id_resource, startTime, endTime };
-    axios.post('http://local.alfred.com/deneva-service/AuditCampaign ', data);
-  };
-
   return (
     <div>
-      <video
-        src={videoUrl}
-        controls
-        onEnded={handleVideoEnd}
-      />
+    <div>
+      <video src={data}></video>
+    </div>
     </div>
   );
 }
 
-export default VideoPlayer;
+export default App;
+
