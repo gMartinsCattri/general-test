@@ -7,7 +7,7 @@ function VideoPlayer() {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    axios.get('http://local.alfred.com/deneva-service/GetNextCampaignn')
+    axios.get('http://local.alfred.com/deneva-service/GetNextCampaign')
       .then(response => {
         const { src } = response.data;
         const srcValue = src.split('//')[1];
