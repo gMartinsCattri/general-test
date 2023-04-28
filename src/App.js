@@ -1,76 +1,59 @@
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 
-function VideoPlayer() {
-  const [videoUrl, setVideoUrl] = useState('');
-  const [videoData, setVideoData] = useState({});
-  const [campaigns, setCampaigns] = useState([]);
-  const [currentCampaignIndex, setCurrentCampaignIndex] = useState(0);
+function App() {
+  const [videoSrc, setVideoSrc] = useState('');
+  const [campaignData, setCampaignData] = useState({});
   const videoRef = useRef(null);
 
-  useEffect(() => {
-    axios.get('http://local.alfred.com/deneva-service/GetNextCampaign')
-      .then(response => {
-        const { src } = response.data;
-        const srcValue = src.split('//')[1];
-        const url = `http://local.alfred.com/media/deneva/${srcValue}`;
-        setVideoUrl(url);
-        setVideoData(response.data);
-        setCampaigns([...campaigns, response.data]);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, []);
+  const getNextCampaign = async () => {
+    const response = await fetch('http://local.alfred.com/deneva-service/GetNextCampaign');
+    const data = await response.json();
+    setCampaignData(data);
 
-  const handleVideoEnd = () => {
-    const { id_campaing, id_resource } = videoData;
-    const startTime = videoRef.current.currentTime;
-    const endTime = new Date().getTime() / 1000;
-    const data = { id_campaing, id_resource, startTime, endTime };
-    axios.post('http://local.alfred.com/deneva-service/AuditCampaign', data)
-      .then(() => {
-        setCurrentCampaignIndex(currentCampaignIndex + 1);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    const srcValue = data.src.split('//')[1];
+    const videoUrl = `http://local.alfred.com/media/deneva/${srcValue}`;
+    setVideoSrc(videoUrl);
+  };
+
+  const handleVideoEnded = async () => {
+    const { id_campaing, id_resource } = campaignData;
+    const currentTime = videoRef.current.currentTime;
+    const timestamp = new Date().toISOString();
+
+    const postBody = {
+      id_campaing,
+      id_resource,
+      startTime: timestamp,
+      endTime: timestamp,
+    };
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(postBody),
+    };
+
+    await fetch('http://local.alfred.com/deneva-service/AuditCampaign', requestOptions);
+    getNextCampaign();
   };
 
   useEffect(() => {
-    if (currentCampaignIndex < campaigns.length) {
-      const campaign = campaigns[currentCampaignIndex];
-      const { src } = campaign;
-      const srcValue = src.split('//')[1];
-      const url = `http://local.alfred.com/media/deneva/${srcValue}`;
-      setVideoUrl(url);
-      setVideoData(campaign);
-    } else {
-      axios.get('http://local.alfred.com/deneva-service/GetNextCampaign')
-        .then(response => {
-          const { src } = response.data;
-          const srcValue = src.split('//')[1];
-          const url = `http://local.alfred.com/media/deneva/${srcValue}`;
-          setVideoUrl(url);
-          setVideoData(response.data);
-          setCampaigns([...campaigns, response.data]);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
-  }, [currentCampaignIndex]);
+    getNextCampaign();
+  }, []);
 
   return (
     <div>
-      <video
-        src={videoUrl}
-        controls
-        onEnded={handleVideoEnd}
-        ref={videoRef}
-      />
+      {videoSrc && (
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          autoPlay
+          muted
+          onEnded={handleVideoEnded}
+        />
+      )}
     </div>
   );
 }
 
-export default VideoPlayer;
+export default App;
