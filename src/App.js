@@ -10,7 +10,7 @@ function App() {
       .then((response) => {
         const srcParts = response.data.src.split("//");
         const srcValue = srcParts[srcParts.length - 1];
-        const url = `http://local.alfred.com/deneva-service/${srcValue}`;
+        const url = `http://local.alfred.com/media/deneva/${srcValue}`;
         setData(url);
         console.log(data)
       })
