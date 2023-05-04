@@ -9,7 +9,7 @@ function App() {
     const response = await fetch('http://local.alfred.com/deneva-service/GetNextCampaign');
     const data = await response.json();
     setCampaignData(data);
-
+    console.log('data', data)
     const srcValue = data.src.split('//')[1];
     const videoUrl = `http://local.alfred.com/media/deneva/${srcValue}`;
     setVideoSrc(videoUrl);
