@@ -18,13 +18,16 @@ function App() {
   const handleVideoEnded = async () => {
     const { id_campaing, id_resource } = campaignData;
     const currentTime = videoRef.current.currentTime;
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().getTime();
+
+    // Convert timestamp to Unix
+    const unixTimestamp = Math.round(timestamp / 1000);
 
     const postBody = {
       id_campaing,
       id_resource,
-      startTime: timestamp,
-      endTime: timestamp,
+      startTime: unixTimestamp,
+      endTime: unixTimestamp,
     };
 
     const requestOptions = {
@@ -32,7 +35,8 @@ function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(postBody),
     };
-    console.log('dados enviados en el body', postBody)
+
+    console.log('dados enviados en el body', postBody);
     await fetch('https://local.alfred.com/deneva-service/AuditCampaign', requestOptions);
     getNextCampaign();
   };
@@ -45,7 +49,7 @@ function App() {
     <div>
       {videoSrc && (
         <video
-        style={{width: '2000px', height: '3500px'}}
+          style={{width: '2000px', height: '3500px'}}
           ref={videoRef}
           src={videoSrc}
           autoPlay
