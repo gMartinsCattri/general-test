@@ -33,7 +33,7 @@ function App() {
       body: JSON.stringify(postBody),
     };
     console.log('dados enviados en el body', postBody)
-    await fetch('http://127.0.0.1:3000/AuditCampaign', requestOptions);
+    await fetch('https://local.alfred.com/deneva-service/AuditCampaign', requestOptions);
     getNextCampaign();
   };
 
