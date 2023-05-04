@@ -16,7 +16,7 @@ function App() {
   };
 
   const handleVideoEnded = async () => {
-    const { id_campaing, id_resource } = campaignData;
+    const { id_campaign, id_resource } = campaignData;
     const currentTime = videoRef.current.currentTime;
     const timestamp = new Date().getTime();
 
@@ -24,7 +24,7 @@ function App() {
     const unixTimestamp = Math.round(timestamp / 1000);
 
     const postBody = {
-      id_campaing,
+      id_campaign,
       id_resource,
       startTime: unixTimestamp,
       endTime: unixTimestamp,
