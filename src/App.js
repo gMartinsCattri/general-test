@@ -10,13 +10,13 @@ const App = () => {
   }, []);
 
   const getNextCampaign = async () => {
-    const response = await fetch('http://127.0.0.1:3000/GetNextCampaign');
+    const response = await fetch('http://local.alfred.com/deneva-service/GetNextCampaign');
     const data = await response.json();
     console.log('Dados recebidos:', data); // adicionado console.log
     setCampaignData(data);
 
     const srcValue = data.src.split('//')[1];
-    const videoUrl = `http://local.alfred.com/deneva/${srcValue}`;
+    const videoUrl = `http://local.alfred.com/media/deneva/${srcValue}`;
     setVideoSrc(videoUrl);
   };
 
@@ -34,7 +34,7 @@ const App = () => {
   
     console.log('Dados enviados:', postData); // adicionado console.log
   
-    await fetch('http://127.0.0.1:3000/AuditCampaign', {
+    await fetch('http://local.alfred.com/deneva-service/AuditCampaign', {
       method: 'POST',
       body: JSON.stringify(postData),
       headers: {
