@@ -49,7 +49,7 @@ function App() {
     <div>
       {videoSrc && (
         <video
-          style={{width: '500px', height: '1500px'}}
+          style={{width: '300px', height: '800px'}}
           ref={videoRef}
           src={videoSrc}
           autoPlay
